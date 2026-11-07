@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SayıHarf{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/output.css">
+</head>
+<body class="min-h-screen bg-sky-100">
+  <main class="mx-auto max-w-5xl p-4">
+    {% block content %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

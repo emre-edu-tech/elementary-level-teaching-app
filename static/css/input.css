@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom animations/keyframes and component classes added per docs/05-frontend.md. */
