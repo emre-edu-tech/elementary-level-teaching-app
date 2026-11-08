@@ -19,6 +19,9 @@
 - All text Turkish. Copy table (reuse, don't invent):
   - App title: "SayıHarf" · Home: "Ana Sayfa" · Progress: "Rozetlerim"
   - Profile: "Profilini Seç", "Yeni Profil", "Adın ne?" · "Başla!"
+  - Greeting: "Hoş geldin <name>!" (spoken + shown on the home welcome card)
+  - Volume (header buttons, emoji-only for kids; Turkish labels are
+    title/aria only): "Ses: Kısık" · "Ses: Orta" · "Ses: Yüksek"
   - Praise: "Harika!", "Bravo!", "Çok güzel!", "Doğru!", "Süper!"
   - Retry: "Tekrar dene!", "Olmadı, bir daha dene!" (rotate randomly)
   - Mic: "Mikrofona bas ve söyle", "Dinliyorum…", "Seni duyamadım, tekrar dene"
@@ -27,9 +30,12 @@
 ## base.html
 
 Kid shell: full-viewport centered column, small header row with avatar emoji +
-name (links to `/profile` to switch) and a home button (🏠). `<body>` classes:
+name (links to `/profile` to switch), a volume group (🔈 🔉 🔊 buttons with
+`data-volume="low|middle|high"`), and a home button (🏠). `<body>` classes:
 `bg-sky-50 text-slate-800 font-sans min-h-screen`. Includes
 `static/css/output.css` and loads the page module via a `{% block scripts %}`.
+After `{% block scripts %}` base.html loads a tiny module that calls
+`initVolumeControl()` from common.js, so the volume group works on every page.
 Confetti `<canvas id="confetti">` fixed, pointer-events-none, in base.
 
 ## Shared JS modules (static/js/)
@@ -53,19 +59,32 @@ export function speak(text, { rate = 0.85 } = {}) {
   const u = new SpeechSynthesisUtterance(text);
   if (trVoice) u.voice = trVoice;
   u.lang = "tr-TR"; u.rate = rate;             // slow: listeners are ~5yo
+  u.volume = getVolume();                      // header 🔈🔉🔊 setting
   speechSynthesis.speak(u);
 }
 ```
 
-If no tr-TR voice is found, show a small dismissible banner: "Türkçe ses
-bulunamadı. Windows ayarlarından Türkçe metin okuma sesi ekleyebilirsin."
-(banner defined once in base.html, shown when `trVoice === null` after
-`voiceschanged` fires at least once).
+If no tr-TR voice is installed, do NOT prompt the user to install one:
+`speak()` leaves `u.voice` unset and the engine's default voice reads the
+Turkish text with `u.lang = "tr-TR"` (pronunciation may be imperfect —
+acceptable for the MVP). Never show install banners or warnings.
+
+Speech can only start after a user gesture (browser autoplay policy), so
+any load-time speech must be attached to a deliberate, kid-obvious tap —
+e.g. the home welcome card ("Hoş geldin <name>!" + success chime), never
+an invisible "tap anywhere" handler.
+
+The home welcome card gets an attention animation so non-readers notice it
+is tappable: the card bounces softly and the 👋 waves (`welcome-attention`
+keyframes in `static/css/input.css`, built into output.css). On the first
+tap home.js removes the `welcome-attention` class so the card rests — the
+loop must not run forever. Honor `prefers-reduced-motion` (animation off).
 
 ### sounds.js — WebAudio chimes (no audio files)
 `sfxSuccess()`: two rising sine notes (e.g. 660→880 Hz, 0.15s each).
 `sfxError()`: single soft low note (220 Hz, 0.2s). Create/resume AudioContext
-on first user click (autoplay policy).
+on first user click (autoplay policy). Chime peak scales with the header
+volume setting (`getVolume()`), so chimes and speech always move together.
 
 ### confetti.js — canvas confetti
 `confetti()`: ~80 particles from top-center, 1.5s, then stop. Simple rects
@@ -73,9 +92,13 @@ on first user click (autoplay policy).
 
 ### common.js
 `postJSON(url, data)`, `postForm(url, formData)`, `randChoice(arr)`,
-`shuffle(arr)`. Every page module calls `postJSON("/api/attempts", ...)`
-after each answer (errors silently ignored).
-
+`shuffle(arr)`, plus the volume setting: `getVolume()` returns 0.5 / 0.8 / 1.0
+for the stored "low" / "middle" / "high" (key `sayiharf-volume` in
+localStorage, default middle); "high" is the browser's speech maximum.
+`initVolumeControl()` wires the header
+`[data-volume]` buttons — a click stores the level immediately and moves the
+amber highlight; no save step, no reload needed. Every page module calls
+`postJSON("/api/attempts", ...)` after each answer (errors silently ignored).
 ### recorder.js
 Mic capture module — specified in `09-stt-capture.md`. Includes the shared
 mic button UI (big round button 🎤 → pulsing red while recording → spinner

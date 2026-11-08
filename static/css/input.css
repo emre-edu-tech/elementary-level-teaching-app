@@ -3,3 +3,29 @@
 @tailwind utilities;
 
 /* Custom animations/keyframes and component classes added per docs/05-frontend.md. */
+
+/* Welcome card attention animation (docs/05-frontend.md): the card bounces
+   softly and the 👋 waves until the child taps it, then home.js removes
+   .welcome-attention and everything rests. */
+@keyframes welcome-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.02); }
+}
+@keyframes welcome-wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(14deg); }
+  75% { transform: rotate(-14deg); }
+}
+.welcome-attention {
+  animation: welcome-bounce 1.6s ease-in-out infinite;
+}
+.welcome-attention .welcome-hand {
+  display: inline-block;
+  animation: welcome-wave 0.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .welcome-attention,
+  .welcome-attention .welcome-hand {
+    animation: none;
+  }
+}

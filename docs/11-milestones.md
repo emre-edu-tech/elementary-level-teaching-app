@@ -20,8 +20,11 @@ Read: 02, 03, 04, 05.
 Build: profile picker (create + switch), home screen with 8 activity buttons,
 progress page shell, TTS module, sounds, common.js, `/api/attempts` and
 `/api/rounds` and `/api/progress`.
-Accept: can create a profile, hear Turkish TTS on home, home buttons link to
-stub play pages.
+Accept: can create a profile, hear Turkish TTS on home via the welcome card
+tap (works without an installed Turkish voice — no install prompt shown);
+the welcome card visibly bounces/waves until the first tap, then rests;
+the header 🔈🔉🔊 volume setting changes TTS and chime loudness and
+persists across pages/reloads, home buttons link to stub play pages.
 
 ## M3 — Number tap games
 Read: 04, 05, 06 (+ lexicon generation from 08 — numbers part).

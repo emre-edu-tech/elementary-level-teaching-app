@@ -1,3 +1,9 @@
 {% extends "base.html" %}
-{% block content %}{% endblock %}
-{% block scripts %}<script type="module" src="/static/js/pages/play.js"></script>{% endblock %}
+{% block title %}{{ title }} · SayıHarf{% endblock %}
+{% block content %}
+<h1 class="text-5xl font-extrabold">{{ title }}</h1>
+{% endblock %}
+{% block scripts %}
+<script>window.GAME_CONFIG = {{ game_config_json | safe }};</script>
+<script type="module" src="/static/js/pages/play.js"></script>
+{% endblock %}

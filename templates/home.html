@@ -1,2 +1,20 @@
 {% extends "base.html" %}
-{% block content %}{% endblock %}
+{% block title %}Ana Sayfa · SayıHarf{% endblock %}
+{% block content %}
+<button id="welcome-button"
+        class="welcome-attention flex min-w-16 min-h-16 flex-col items-center gap-2 rounded-3xl border-4 border-white bg-white px-10 py-6 shadow-lg hover:bg-amber-50">
+  <span class="welcome-hand text-7xl">👋</span>
+  <span class="text-4xl font-extrabold">Hoş geldin {{ profile.name }}!</span>
+</button>
+
+<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+  {% for activity_id, info in activities.items() %}
+  <a href="/play/{{ activity_id }}"
+     class="flex min-w-16 min-h-16 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-white p-6 shadow-lg hover:bg-amber-50">
+    <span class="text-6xl">{{ info.emoji }}</span>
+    <span class="text-center text-2xl font-bold">{{ info.title }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/home.js"></script>{% endblock %}

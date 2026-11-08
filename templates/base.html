@@ -6,10 +6,38 @@
   <title>{% block title %}SayıHarf{% endblock %}</title>
   <link rel="stylesheet" href="/static/css/output.css">
 </head>
-<body class="min-h-screen bg-sky-100">
-  <main class="mx-auto max-w-5xl p-4">
+<body class="flex min-h-screen flex-col bg-sky-50 font-sans text-slate-800"
+      {% if profile %}data-profile-name="{{ profile.name }}"{% endif %}>
+  {% if profile %}
+  <header class="flex items-center justify-between gap-3 p-4">
+    <a href="/profile" aria-label="Profilini Seç"
+       class="flex min-h-16 items-center gap-3 rounded-3xl border-4 border-white bg-white px-5 shadow-lg">
+      <span class="text-4xl">{{ profile.avatar }}</span>
+      <span class="text-2xl font-bold">{{ profile.name }}</span>
+    </a>
+    <div class="flex items-center gap-1">
+      <button type="button" data-volume="low" aria-label="Ses: Kısık" title="Ses: Kısık"
+              class="flex min-w-16 min-h-16 items-center justify-center rounded-3xl border-4 border-white bg-white text-3xl shadow-lg">🔈</button>
+      <button type="button" data-volume="middle" aria-label="Ses: Orta" title="Ses: Orta"
+              class="flex min-w-16 min-h-16 items-center justify-center rounded-3xl border-4 border-white bg-white text-3xl shadow-lg">🔉</button>
+      <button type="button" data-volume="high" aria-label="Ses: Yüksek" title="Ses: Yüksek"
+              class="flex min-w-16 min-h-16 items-center justify-center rounded-3xl border-4 border-white bg-white text-3xl shadow-lg">🔊</button>
+    </div>
+    <a href="/home" aria-label="Ana Sayfa"
+       class="flex min-w-16 min-h-16 items-center justify-center rounded-3xl border-4 border-white bg-white text-4xl shadow-lg">🏠</a>
+  </header>
+  {% endif %}
+
+  <main class="flex flex-1 flex-col items-center justify-center gap-6 p-4">
     {% block content %}{% endblock %}
   </main>
+
+  <canvas id="confetti" class="pointer-events-none fixed inset-0 z-50"></canvas>
+
   {% block scripts %}{% endblock %}
+  <script type="module">
+    import { initVolumeControl } from "/static/js/common.js";
+    initVolumeControl();
+  </script>
 </body>
 </html>
