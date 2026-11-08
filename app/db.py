@@ -49,11 +49,12 @@ def close_db(_exc=None):
         db.close()
 
 
-def init_db():
+def init_db(db_path=None):
     """Create the schema. Opens its own connection (works outside app context)."""
-    db_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "data", "app.db"
-    )
+    if db_path is None:
+        db_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "data", "app.db"
+        )
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
     conn = sqlite3.connect(db_path)
     try:

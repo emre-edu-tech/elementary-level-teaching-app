@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app.db import close_db
+from app.db import close_db, init_db
 
 
 def create_app():
@@ -11,6 +11,10 @@ def create_app():
         static_folder="../static",
     )
     app.config.from_object("app.config.Config")
+
+    # Bootstrap the database so a fresh clone/deploys works without a manual
+    # init step: creates data/ dir and schema (idempotent, IF NOT EXISTS).
+    init_db(app.config["DB_PATH"])
 
     app.teardown_appcontext(close_db)
 
