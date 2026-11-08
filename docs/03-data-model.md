@@ -1,8 +1,10 @@
 # 03 — Data Model (SQLite)
 
 File: `data/app.db`. Created by `app/db.py::init_db()` (idempotent:
-`CREATE TABLE IF NOT EXISTS`). Enable `PRAGMA foreign_keys = ON` per
-connection. Use `sqlite3.Row` row factory.
+`CREATE TABLE IF NOT EXISTS`) — called automatically by `create_app()` at
+startup, so a fresh clone or server deploy boots with no manual init step
+(it creates the `data/` directory too). Enable `PRAGMA foreign_keys = ON`
+per connection. Use `sqlite3.Row` row factory.
 
 ## Schema
 
@@ -62,9 +64,11 @@ def close_db(_exc=None):
         db.close()
 ```
 
-- `init_db()` opens its own standalone connection (works outside app context),
-  executes the schema above, commits, closes. Register `close_db` in
-  `create_app()` via `app.teardown_appcontext`.
+- `init_db(db_path=None)` opens its own standalone connection (works outside
+  app context), executes the schema above, commits, closes. `create_app()`
+  calls it with `app.config["DB_PATH"]` at startup; calling it manually is
+  still fine. Register `close_db` in `create_app()` via
+  `app.teardown_appcontext`.
 - All writes commit immediately (kid taps are low-frequency; simplicity wins).
 - No migrations needed for MVP. If the schema changes during development,
   deleting `data/app.db` and re-initializing is acceptable.

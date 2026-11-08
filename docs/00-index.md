@@ -32,7 +32,7 @@ the 29-letter Turkish alphabet, with voice-answer activities powered by STT.
 ## File contents at a glance
 
 - `01-overview.md` — product, audience, scope IN/OUT
-- `02-architecture.md` — stack, project tree, config, build/run commands
+- `02-architecture.md` — stack, project tree, config, build/run commands, VPS deployment
 - `03-data-model.md` — SQLite schema, db helper conventions
 - `04-api.md` — every route and JSON contract
 - `05-frontend.md` — design rules for kids, shared JS helpers (TTS, sounds, recorder UI)

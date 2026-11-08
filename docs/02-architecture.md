@@ -15,13 +15,14 @@
 ## Project tree
 
 ```
-run.py                  # app entry: from app import create_app; app.run(...)
+run.py                  # dev entry: from app import create_app; app.run(...)
+wsgi.py                 # prod entry: `application` object for Passenger (git-tracked)
 requirements.txt
 package.json            # tailwindcss@^3.4, postcss, autoprefixer
 tailwind.config.js      # content: ./templates/**/*.html, ./static/js/**/*.js
 postcss.config.js
 app/
-  __init__.py           # create_app(): config, blueprints, db teardown
+  __init__.py           # create_app(): config, db bootstrap, blueprints, db teardown
   config.py             # SECRET_KEY, DB_PATH, WHISPER_MODEL, WHISPER_COMPUTE_TYPE
   db.py                 # get_db(), close_db(), init_db() (schema in 03)
   lexicon.py            # Turkish lexicon generated from rules in 08
@@ -41,7 +42,7 @@ static/
   js/confetti.js        # canvas confetti, no library
   js/recorder.js        # mic capture module (spec in 09)
   js/pages/*.js         # one module per page
-data/app.db             # SQLite file (gitignored, created by init)
+data/app.db             # SQLite file (gitignored, auto-created on first boot)
 docs/                   # these specs
 ```
 
@@ -70,9 +71,26 @@ pip install -r requirements.txt
 npm install
 npm run watch            # dev: Tailwind rebuild on change
 npm run build            # prod: minified one-off build
-python -c "from app.db import init_db; init_db()"   # create schema
 python run.py            # http://127.0.0.1:5000 (run with the venv interpreter)
 ```
+
+No manual DB init step: `create_app()` calls `init_db()` (idempotent), which
+creates the `data/` directory and schema on first boot.
+
+## Deployment (VPS: nginx + Phusion Passenger)
+
+- `wsgi.py` (repo root, git-tracked) exposes the WSGI `application` object
+  Passenger needs; it travels to the server with `git pull`.
+- Server venv: `python3 -m venv venv && venv/bin/pip install -r requirements.txt`,
+  then point Passenger at it via the `passenger_python` directive in the nginx
+  site config.
+- No Node/npm on the server: `static/css/output.css` is committed (built
+  locally — see project tree note).
+- `data/` + `data/app.db` are created automatically on first boot; the Passenger
+  user needs write access to the project root.
+- Set a real `SECRET_KEY` in the server environment. HTTPS is required for the
+  microphone (getUserMedia) — terminate TLS at nginx.
+- Redeploy: `git pull`, then `touch tmp/restart.txt` (dir is git-tracked).
 
 ## Conventions
 

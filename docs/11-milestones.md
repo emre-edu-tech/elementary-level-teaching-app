@@ -63,9 +63,13 @@ instructions.
 
 ## M8 — Final polish + README
 Read: 01, 11.
-Build: README.md (setup: pip, npm install, npm run build, init_db, run;
-HTTPS note for mic; how to change WHISPER_MODEL), .gitignore
+Build: README.md (setup: pip, npm install, npm run build, run — no manual
+init_db step, schema auto-initializes on first boot; HTTPS note for mic; how
+to change WHISPER_MODEL; VPS deploy section per 02 §Deployment: nginx +
+Passenger with the existing git-tracked `wsgi.py`, server venv +
+`passenger_python`, restart via `tmp/restart.txt`), .gitignore
 (data/, node_modules, __pycache__; static/css/output.css is committed, not
 ignored — built locally and reused on the remote server), 10-minute manual
 test pass over all 8 activities.
-Accept: fresh-machine setup works from README alone.
+Accept: fresh-machine setup works from README alone; deploy section matches
+the live VPS setup.
