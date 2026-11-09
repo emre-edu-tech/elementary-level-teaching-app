@@ -4,13 +4,13 @@ from app.db import get_db
 
 api_bp = Blueprint("api", __name__)
 
-# Valid activity ids (docs/03) with their Turkish titles / icons (docs/04, 05).
+# Valid activity ids (docs/03) with their Turkish titles (docs/06) / icons.
 ACTIVITIES = {
-    "numbers_count": {"title": "Sayıları Say", "emoji": "🔢"},
-    "numbers_next": {"title": "Sıradaki Sayı", "emoji": "➡️"},
+    "numbers_count": {"title": "Nesneleri Say", "emoji": "🔢"},
+    "numbers_next": {"title": "Sırada Hangi Sayı Var?", "emoji": "➡️"},
     "numbers_find": {"title": "Sayıyı Bul", "emoji": "🔍"},
-    "numbers_tens": {"title": "Onluklar", "emoji": "🧮"},
-    "voice_numbers": {"title": "Sesli Sayılar", "emoji": "🎤"},
+    "numbers_tens": {"title": "Onar Onar Sayalım", "emoji": "🧮"},
+    "voice_numbers": {"title": "Sayıyı Söyle", "emoji": "🎤"},
     "letters_meet": {"title": "Harfleri Tanı", "emoji": "🔤"},
     "letters_find": {"title": "Harfi Bul", "emoji": "🔎"},
     "voice_letters": {"title": "Sesli Harfler", "emoji": "🎙️"},

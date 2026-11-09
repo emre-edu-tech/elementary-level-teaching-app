@@ -3,6 +3,7 @@ import json
 from flask import Blueprint, abort, redirect, render_template, request, session
 
 from app.db import get_db
+from app.lexicon import number_words
 from app.routes.api import ACTIVITIES
 
 pages_bp = Blueprint("pages", __name__)
@@ -73,7 +74,12 @@ def play(activity_id):
     if activity_id not in ACTIVITIES:
         abort(404)
     profile = load_profile()
-    config = {"activity": activity_id, "title": ACTIVITIES[activity_id]["title"]}
+    config = {
+        "activity": activity_id,
+        "title": ACTIVITIES[activity_id]["title"],
+        # docs/08-content-tr.md §Frontend data: lexicon injected from lexicon.py
+        "lexicon": {"numberWords": number_words()},
+    }
     return render_template(
         "play.html",
         profile=profile,

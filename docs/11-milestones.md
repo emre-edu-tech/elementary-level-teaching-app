@@ -29,7 +29,8 @@ persists across pages/reloads, home buttons link to stub play pages.
 ## M3 — Number tap games
 Read: 04, 05, 06 (+ lexicon generation from 08 — numbers part).
 Build: lexicon.py number rules, play.html shared shell, all 4 tap games,
-confetti, stars end screen, `/api/rounds` wired.
+confetti, stars end screen, `/api/rounds` wired, header 🏅 link to `/progress`
+(added by user request — the page itself stays an M7 deliverable).
 Accept: full 5-question rounds playable in all 4 games; stars persist per
 profile.
 

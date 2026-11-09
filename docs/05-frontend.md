@@ -31,7 +31,9 @@
 
 Kid shell: full-viewport centered column, small header row with avatar emoji +
 name (links to `/profile` to switch), a volume group (🔈 🔉 🔊 buttons with
-`data-volume="low|middle|high"`), and a home button (🏠). `<body>` classes:
+`data-volume="low|middle|high"`), a progress sticker button (🏅 links to
+`/progress`, screen shows emoji only — "Rozetlerim" is title/aria only), and a
+home button (🏠). `<body>` classes:
 `bg-sky-50 text-slate-800 font-sans min-h-screen`. Includes
 `static/css/output.css` and loads the page module via a `{% block scripts %}`.
 After `{% block scripts %}` base.html loads a tiny module that calls

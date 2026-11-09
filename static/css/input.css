@@ -23,6 +23,30 @@
   display: inline-block;
   animation: welcome-wave 0.8s ease-in-out infinite;
 }
+/* Correct/wrong feedback animations (docs/05-frontend.md): wrong → card
+   shakes; correct → card flashes emerald. Applied by play.js per game. */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+@keyframes flash-success {
+  0%, 100% { background-color: #ffffff; }
+  40% { background-color: #34d399; }
+}
+.flash-success {
+  animation: flash-success 0.6s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shake,
+  .flash-success {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .welcome-attention,
   .welcome-attention .welcome-hand {

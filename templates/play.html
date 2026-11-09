@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block title %}{{ title }} · SayıHarf{% endblock %}
 {% block content %}
-<h1 class="text-5xl font-extrabold">{{ title }}</h1>
+<div class="flex w-full max-w-4xl items-center justify-between gap-3">
+  <h1 class="text-4xl font-extrabold md:text-5xl">{{ title }}</h1>
+  <button type="button" id="replay" aria-label="Tekrar söyle" title="Tekrar söyle"
+          class="flex min-w-16 min-h-16 items-center justify-center rounded-3xl border-4 border-white bg-white text-3xl shadow-lg">🔊</button>
+</div>
+<p id="instruction" class="text-center text-3xl font-bold"></p>
+<div id="game-area" class="flex flex-col items-center gap-6"></div>
 {% endblock %}
 {% block scripts %}
 <script>window.GAME_CONFIG = {{ game_config_json | safe }};</script>
