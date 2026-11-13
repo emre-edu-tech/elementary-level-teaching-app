@@ -39,3 +39,59 @@ def numberWord(n):
 def number_words():
     """str(n) -> word map for window.GAME_CONFIG.lexicon.numberWords."""
     return {str(n): word for n, word in _NUMBER_WORDS.items()}
+
+
+# Letters (docs/08-content-tr.md §Letters): char | TTS name | accepted STT
+# variants (pre-normalization; normalization strips spaces/punctuation and maps
+# ı->i). Used by the server for STT matching in M6 and injected into the
+# frontend as window.GAME_CONFIG.lexicon.letters ({char, lower, name} only).
+_LETTER_ROWS = [
+    ("A", "a", "a", ("a",)),
+    ("B", "b", "be", ("be", "beh", "b")),
+    ("C", "c", "ce", ("ce", "ceh", "c")),
+    ("Ç", "ç", "çe", ("çe", "çeh", "ç")),
+    ("D", "d", "de", ("de", "deh", "d")),
+    ("E", "e", "e", ("e",)),
+    ("F", "f", "fe", ("fe", "feh", "f")),
+    ("G", "g", "ge", ("ge", "geh", "g")),
+    ("Ğ", "ğ", "yumuşak ge", ("yumusakge", "yumusakgeh", "yumusak ge")),
+    ("H", "h", "he", ("he", "heh", "h")),
+    ("I", "ı", "ı", ("ı",)),
+    ("İ", "i", "i", ("i",)),
+    ("J", "j", "je", ("je", "jeh", "j")),
+    ("K", "k", "ke", ("ke", "keh", "k")),
+    ("L", "l", "le", ("le", "leh", "l")),
+    ("M", "m", "me", ("me", "meh", "m")),
+    ("N", "n", "ne", ("ne", "neh", "n")),
+    ("O", "o", "o", ("o",)),
+    ("Ö", "ö", "ö", ("ö",)),
+    ("P", "p", "pe", ("pe", "peh", "p")),
+    ("R", "r", "re", ("re", "reh", "r")),
+    ("S", "s", "se", ("se", "seh", "s")),
+    ("Ş", "ş", "şe", ("şe", "şeh", "ş")),
+    ("T", "t", "te", ("te", "teh", "t")),
+    ("U", "u", "u", ("u",)),
+    ("Ü", "ü", "ü", ("ü",)),
+    ("V", "v", "ve", ("ve", "veh", "v")),
+    ("Y", "y", "ye", ("ye", "yeh", "y")),
+    ("Z", "z", "zed", ("zed", "zedh", "z")),
+]
+
+LETTERS = [
+    {"char": char, "lower": lower, "name": name, "variants": list(variants)}
+    for char, lower, name, variants in _LETTER_ROWS
+]
+
+
+def letters():
+    """Frontend shape for window.GAME_CONFIG.lexicon.letters — no variants."""
+    return [{"char": l["char"], "lower": l["lower"], "name": l["name"]}
+            for l in LETTERS]
+
+
+def letter_variants(char):
+    """Accepted STT variants for a letter, e.g. 'B' -> ['be', 'beh', 'b']."""
+    for l in LETTERS:
+        if l["char"] == char:
+            return list(l["variants"])
+    raise ValueError(f"letter_variants: bilinmeyen harf {char!r}")

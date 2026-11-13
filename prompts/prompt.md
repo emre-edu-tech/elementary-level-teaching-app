@@ -17,5 +17,5 @@ You are implementing one milestone of a pre-planned project. The full spec lives
    - Give me a short "how to verify" list (commands + what I should see).
    - Do NOT start the next milestone.
 
-CURRENT MILESTONE: M2 — Profiles, home, progress page shell
-(specs to read: 02-architecture.md, 03-data-model.md, 04-api.md, 05-frontend.md)
+CURRENT MILESTONE: M4 — Letter games
+(specs to read: 05-frontend.md, 07-games-letters.md [+ letters part of 08-content-tr.md])

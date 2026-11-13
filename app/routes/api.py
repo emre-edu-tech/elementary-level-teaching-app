@@ -11,7 +11,7 @@ ACTIVITIES = {
     "numbers_find": {"title": "Sayıyı Bul", "emoji": "🔍"},
     "numbers_tens": {"title": "Onar Onar Sayalım", "emoji": "🧮"},
     "voice_numbers": {"title": "Sayıyı Söyle", "emoji": "🎤"},
-    "letters_meet": {"title": "Harfleri Tanı", "emoji": "🔤"},
+    "letters_meet": {"title": "Harfleri Tanıyalım", "emoji": "🔤"},
     "letters_find": {"title": "Harfi Bul", "emoji": "🔎"},
     "voice_letters": {"title": "Sesli Harfler", "emoji": "🎙️"},
 }

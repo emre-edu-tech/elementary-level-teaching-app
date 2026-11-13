@@ -17,6 +17,13 @@ const ROUND_WORDS = "Tebrikler!"; // round end (spoken) + "Ana Sayfa"/"Tekrar oy
 const ACTIVITY = window.GAME_CONFIG.activity;
 // Turkish number words 1–100, injected from app/lexicon.py (docs/08).
 const NUM = window.GAME_CONFIG.lexicon.numberWords;
+// 29 letters {char, lower, name} in alphabet order, injected from lexicon.py.
+const LETTERS = window.GAME_CONFIG.lexicon.letters;
+
+function letterName(char) {
+  const l = LETTERS.find((x) => x.char === char);
+  return l ? l.name : char;
+}
 
 const els = {
   instruction: document.getElementById("instruction"),
@@ -357,6 +364,109 @@ function scoreTens(firstTries) {
   return firstTries;
 }
 
+// ---- letters_meet — "Harfleri Tanıyalım" -------------------------------
+
+// Free play, no rounds/stars (docs/07): 29-letter grid, tap → pop + TTS name,
+// card stays highlighted until the next tap. Every tap logs correct:true.
+function lettersMeet() {
+  els.area.innerHTML = "";
+  els.instruction.textContent = "";
+
+  let highlighted = null;
+  let playing = false; // "Sırayla söyle" sequence; any tap cancels it
+
+  const grid = document.createElement("div");
+  grid.className = "flex max-w-3xl flex-wrap justify-center gap-3";
+  const cards = LETTERS.map(({ char, lower, name }) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `${CARD} gap-2 p-3 hover:bg-amber-400`;
+
+    const up = document.createElement("span");
+    up.textContent = char;
+    up.className = "text-6xl font-extrabold";
+    const low = document.createElement("span");
+    low.textContent = lower;
+    low.className = "text-4xl font-bold opacity-70";
+    card.append(up, low);
+
+    card.addEventListener("click", () => {
+      playing = false; // cancel the A→Z sequence on any tap (docs/07)
+      window.speechSynthesis?.cancel();
+      if (highlighted && highlighted !== card) {
+        highlighted.classList.remove("bg-amber-400");
+      }
+      card.classList.add("bg-amber-400");
+      highlighted = card;
+      card.classList.add("pop");
+      card.addEventListener(
+        "animationend",
+        () => card.classList.remove("pop"),
+        { once: true }
+      );
+      logAttempt(char, true); // interest only, no round_results (docs/07)
+      say(name);
+    });
+    return card;
+  });
+  grid.append(...cards);
+  els.area.append(grid);
+
+  async function playSequence() {
+    for (const { name } of LETTERS) {
+      if (!playing) return;
+      say(name);
+      await delay(900); // docs/07: one letter every 0.9s
+    }
+    playing = false;
+  }
+
+  const seqBtn = document.createElement("button");
+  seqBtn.type = "button";
+  seqBtn.textContent = "Sırayla söyle";
+  seqBtn.className = `${CARD} bg-amber-400 px-8 py-4 text-3xl font-extrabold hover:bg-amber-300`;
+  seqBtn.addEventListener("click", () => {
+    if (playing) {
+      playing = false; // second tap stops the sequence
+      window.speechSynthesis?.cancel();
+      return;
+    }
+    playing = true;
+    playSequence();
+  });
+  els.area.append(seqBtn);
+}
+
+// ---- letters_find — "Harfi Bul" -----------------------------------------
+
+// Visually confusable pairs (docs/07): with 50% probability one distractor
+// is the target's pair (B/C, İ/I, Ö/O, Ü/U, Ş/S, Ğ/G).
+const CONFUSABLE = {
+  B: "C", C: "B", İ: "I", I: "İ", Ö: "O", O: "Ö",
+  Ü: "U", U: "Ü", Ş: "S", S: "Ş", Ğ: "G", G: "Ğ",
+};
+
+async function questionLettersFind(questionIndex) {
+  const target = randChoice(LETTERS).char;
+  // 4 letter cards (questions 1–3), 6 cards (questions 4–5) — docs/07.
+  const optionCount = questionIndex >= 3 ? 6 : 4;
+
+  const pool = LETTERS.map((l) => l.char).filter((c) => c !== target);
+  const distractorSet = new Set();
+  const confusable = CONFUSABLE[target];
+  if (confusable && Math.random() < 0.5) distractorSet.add(confusable);
+  while (distractorSet.size < optionCount - 1) {
+    distractorSet.add(randChoice(pool));
+  }
+
+  return askQuestion({
+    instruction: `${letterName(target)} harfini bul!`,
+    item: target,
+    answer: target,
+    options: [target, ...distractorSet],
+  });
+}
+
 // ---- dispatch ----------------------------------------------------------
 
 const games = {
@@ -367,6 +477,9 @@ const games = {
   numbers_find: () =>
     runRound([0, 1, 2, 3, 4].map((i) => () => questionFind(i))),
   numbers_tens: numbersTens,
+  letters_meet: lettersMeet,
+  letters_find: () =>
+    runRound([0, 1, 2, 3, 4].map((i) => () => questionLettersFind(i))),
 };
 
 function start() {
